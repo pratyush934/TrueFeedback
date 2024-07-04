@@ -15,3 +15,5 @@ export const signUpSchema = z.object({
     .min(4, { message: "Must be above 4 characters" })
     .max(20, { message: "Must be below 20 charaacters" }),
 });
+
+
