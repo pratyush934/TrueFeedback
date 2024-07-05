@@ -22,5 +22,5 @@ export const MessageSchema: Schema<Message> = new Schema({
     try before use
 */
 
-export const MessageModel =
-  mongoose.models.Message || mongoose.model<Message>("Message", MessageSchema);
+// export const MessageModel =
+//   mongoose.models.Message || mongoose.model<Message>("Message", MessageSchema);
