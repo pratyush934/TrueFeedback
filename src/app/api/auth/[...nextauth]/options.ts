@@ -5,6 +5,7 @@ import { UserModel } from "@/models/User.model";
 import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
+  
   providers: [
 
     CredentialsProvider({
