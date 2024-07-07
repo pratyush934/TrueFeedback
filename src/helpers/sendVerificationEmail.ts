@@ -7,6 +7,7 @@ export async function sendVerificationEmail(
   username: string,
   verifyCode: string
 ): Promise<ApiResponse> {
+  
   try {
     await resend.emails.send({
       from: "onboarding@resend.dev",
