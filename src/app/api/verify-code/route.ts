@@ -8,6 +8,7 @@ export async function POST(req: Request) {
     const { username, code } = await req.json();
 
     //verify kare
+    //%20 jaisi chizo ko remove karta hai
     const decodedUserName = decodeURIComponent(username);
 
     const user = await UserModel.findOne({
