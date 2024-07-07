@@ -24,6 +24,7 @@ export async function GET(req: Request) {
   await dbConnection();
 
   try {
+    
     //localhost:3000/api/cuu?username=pratyush?phone=android
     const { searchParams } = new URL(req.url);
 
