@@ -49,7 +49,8 @@ export async function POST(req: Request) {
         
         const hashedPassword = await bycrypt.hash(password, 10);
         const expiryDate = new Date();
-        expiryDate.setHours(expiryDate.getHours() + 1);
+        // console.log(`EzpiryDate ko print kara ke dekho jara`, expiryDate);
+        expiryDate.setHours(expiryDate.getHours() + 10);
 
         isUserExistByEmail.password = hashedPassword;
         isUserExistByEmail.verifiedCode = verifyCode;

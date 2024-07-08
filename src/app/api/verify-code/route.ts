@@ -9,8 +9,9 @@ export async function POST(req: Request) {
 
     //verify kare
     //%20 jaisi chizo ko remove karta hai
+    console.log(username);
     const decodedUserName = decodeURIComponent(username);
-
+    console.log(decodedUserName);
     const user = await UserModel.findOne({
       username: decodedUserName,
     });

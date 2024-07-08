@@ -47,7 +47,7 @@ export const UserSchema: Schema<User> = new Schema({
     default: true,
   },
   verifyCodeExpiry: {
-    type: String,
+    type: Date,
     required: [true, "Verify code expiry is requried"],
   },
   messages: [MessageSchema],
