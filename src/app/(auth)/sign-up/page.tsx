@@ -5,27 +5,41 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useDebounceValue } from "usehooks-ts";
+import { useDebounceCallback, useDebounceValue } from "usehooks-ts";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 //functionalities -> ui
 
 const Page = () => {
   //debouncing means while typing aap api req bhejte ho ushe aapko optimize karna hai
 
   const [userName, setUserName] = useState<string>("");
-  const [userNameMessage, setUserNameMessage] = useState("");
+  const [userNameMessage, setuserNameMessage] = useState<string>("");
   const [isCheckingUserName, setIsCheckingUserName] = useState<boolean>(false);
-  const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
+  const [isSubmitting, setisSubmitting] = useState<boolean>(false);
 
-  const debounceUserName = useDebounceValue(userName, 300);
+  // const debounceUserName = useDebounceValue(userName, 300);
+  const debounce = useDebounceCallback(setUserName, 300);
 
   const { toast } = useToast();
   const router = useRouter();
 
+  //form useForm se le liye
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -37,30 +51,31 @@ const Page = () => {
 
   useEffect(() => {
     const chekcUserNameUnique = async () => {
+      if (userName) {
+        setIsCheckingUserName(true);
+        setuserNameMessage("");
+      }
+
       try {
-        if (debounceUserName) {
-          setIsCheckingUserName(true);
-          setUserNameMessage("");
-
-          const response = await axios.get(
-            `/api/check-username-unique?username=${debounceUserName}`
-          );
-          console.log(response);
-
-          setUserNameMessage(response.data.message);
-        }
+        const response = await axios.get<ApiResponse>(
+          `/api/check-username-unique?username=${userName}`
+        );
+        console.log("8**************888", response, "88888888888*****");
+        // console.log(response.data.message);
+        let message = response.data.message;
+        setuserNameMessage(message);
       } catch (error) {
-        console.error(`Error in sign-in front end`, error);
+        console.error(`Error in sign-in front end------>`, error);
         const axiosError = error as AxiosError<ApiResponse>;
-        setUserNameMessage(axiosError.response?.data.message ?? "Erro exist");
+        setuserNameMessage(axiosError.response?.data.message ?? "Erro exist");
       } finally {
         setIsCheckingUserName(false);
       }
     };
     chekcUserNameUnique();
-  }, [debounceUserName]);
-
+  }, [userName]);
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
+    setisSubmitting(true)
     try {
       const response = await axios.post<ApiResponse>("/api/sign-up", data);
       console.log(response);
@@ -71,11 +86,11 @@ const Page = () => {
       });
 
       //no history will be added with the use of replace and will redirect to this page
+      // console.log("Is submitting is creating issues let me print ----> ", isSubmitting);
+      // setisSubmitting(true)
       router.replace(`/verify/${userName}`);
-      setIsSubmiting(false);
-
+      setisSubmitting(false);
     } catch (error) {
-      
       console.error(`Error exist in onSubmit in sign-up tsx`, error);
       const axiosError = error as AxiosError<ApiResponse>;
       let errorMessage = axiosError.response?.data.message;
@@ -84,11 +99,105 @@ const Page = () => {
         description: errorMessage,
         variant: "destructive",
       });
-      setIsSubmiting(false);
+      // console.log("Is submitting is creating issues let me print ----> ", isSubmitting);
+      setisSubmitting(false);
     }
   };
 
-  return <div>page</div>;
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-800">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Join True Feedback
+          </h1>
+          <p className="mb-4">Sign up to start your anonymous adventure</p>
+        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="username"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        //ye krantikari move hai
+                        debounce(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  {isCheckingUserName && <Loader2 className="animate-spin" />}
+                  {userName && !isCheckingUserName && userNameMessage && (
+                    <p
+                      className={`text-sm ${
+                        userNameMessage === "Username is unique"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {userNameMessage}
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input placeholder="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Sign Up"
+              )}
+            </Button>
+          </form>
+        </Form>
+
+        <div className="text-center mt-4">
+          <p>
+            Already a member?{" "}
+            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Page;

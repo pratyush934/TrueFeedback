@@ -3,8 +3,8 @@ import { z } from "zod";
 // sirf ek field hai is liye
 export const userNameValidation = z
   .string()
-  .max(20, { message: "Must be below 20 characters" })
   .min(2, "Must be above 2 characters")
+  .max(20, { message: "Must be below 20 characters" })
   .regex(/^[0-9a-zA-Z]+$/, "Username must contain only letters and numbers");
 
 export const signUpSchema = z.object({

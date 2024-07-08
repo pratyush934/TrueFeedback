@@ -8,7 +8,6 @@ const UserNameQuerySchema = z.object({
 });
 
 export async function GET(req: Request) {
-
   /* if (req.method !== "GET") {
     return Response.json(
       {
@@ -24,7 +23,6 @@ export async function GET(req: Request) {
   await dbConnection();
 
   try {
-    
     //localhost:3000/api/cuu?username=pratyush?phone=android
     const { searchParams } = new URL(req.url);
 
@@ -46,7 +44,7 @@ export async function GET(req: Request) {
           message:
             userNameErrors?.length > 0
               ? userNameErrors.join(", ")
-              : `Invalid query parameters`,
+              : "Invalid query parameters",
         },
         {
           status: 400,
