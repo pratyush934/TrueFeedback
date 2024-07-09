@@ -10,7 +10,12 @@ export async function POST(req: Request) {
 
   const session = await getServerSession(authOptions);
 
-  const user: User = session?.user as User;
+  const user: User = session?.user;
+
+  console.log("11", user);
+
+  console.log("22", session?.user);
+  console.log("33", session);
 
   if (!session?.user || session) {
     return Response.json(
@@ -19,7 +24,7 @@ export async function POST(req: Request) {
         message: "Not authenticate",
       },
       {
-        status: 400,
+        status: 401,
       }
     );
   }
@@ -46,17 +51,16 @@ export async function POST(req: Request) {
           status: 400,
         }
       );
-    } else {
-      return Response.json(
-        {
-          success: true,
-          message: `Message acceptance status updated successfully`,
-        },
-        {
-          status: 201,
-        }
-      );
     }
+    return Response.json(
+      {
+        success: true,
+        message: `Message acceptance status updated successfully`,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     console.log(`Error in accept-message route`, error);
 
@@ -106,17 +110,16 @@ export async function GET(req: Request) {
           status: 400,
         }
       );
-    } else {
-      return Response.json(
-        {
-          success: true,
-          message: `Accepting the message`,
-        },
-        {
-          status: 201,
-        }
-      );
     }
+    return Response.json(
+      {
+        success: true,
+        message: foundUser.isAcceptingMessage,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     console.log(`Error in getting message in GET method`, error);
     return Response.json(

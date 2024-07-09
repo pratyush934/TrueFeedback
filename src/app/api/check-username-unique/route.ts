@@ -8,6 +8,7 @@ const UserNameQuerySchema = z.object({
 });
 
 export async function GET(req: Request) {
+  
   /* if (req.method !== "GET") {
     return Response.json(
       {
