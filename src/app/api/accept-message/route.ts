@@ -10,14 +10,16 @@ export async function POST(req: Request) {
 
   const session = await getServerSession(authOptions);
 
-  const user: User = session?.user;
+  const user: User = session?.user as User;
 
-  console.log("11", user);
+  // console.log("11", user);
 
-  console.log("22", session?.user);
-  console.log("33", session);
+  // console.log("22", session?.user);
+  // console.log("33", session);
 
-  if (!session?.user || session) {
+  // console.log(!session?.user || !session);
+
+  if (!session?.user || !session) {
     return Response.json(
       {
         success: false,
@@ -40,8 +42,8 @@ export async function POST(req: Request) {
       },
       { new: true }
     );
-
-    if (updatedUser) {
+    // console.log(updatedUser);
+    if (!updatedUser) {
       return Response.json(
         {
           success: false,
@@ -77,6 +79,7 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  
   await dbConnection();
 
   const session = await getServerSession(authOptions);
